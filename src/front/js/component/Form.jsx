@@ -1,9 +1,10 @@
 import React, { useState, useContext } from 'react';
 import { Context } from '../store/appContext.js';
-import{Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Form = () => {
     const { actions } = useContext(Context)
+    const navigate = useNavigate()
     const [data, setData] = useState({
         name: "",
         email: "",
@@ -23,13 +24,14 @@ const Form = () => {
             setData({
                 name: "",
                 email: "",
-                password: ""
-            })
+                password: "",
+            });
+            navigate("/");
         } catch (e) {
             console.log(e);
 
         }
-    }
+    };
 
     return (
         <div className='col-6 container-fluid'>
@@ -50,9 +52,9 @@ const Form = () => {
                     <input value={data.password} name='password' type="password" onChange={handleData} className="form-control" id="password'" />
                 </div>
 
-              
+
                 <button type="submit" className="btn btn-primary">Registrarse</button>
-                
+
             </form>
         </div>
     )

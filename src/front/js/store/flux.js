@@ -1,20 +1,9 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			message: null,
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			],
-			usersList: []
+	
+			usersList: [],
+			// auth:false
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -24,7 +13,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			register: async(infoUser) =>{
 				try{
-					let response = await fetch("https://vigilant-orbit-r47rx6gxj55g35p6g-3001.app.github.dev/api/register",{
+					let response = await fetch(process.env.BACKEND_URL + "/api/register",{
 						method: "POST",
 						body: JSON.stringify(infoUser),
 						headers:{
@@ -46,7 +35,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			login: async(infoLogin)=>{
 				try{
-					const response = await fetch("https://vigilant-orbit-r47rx6gxj55g35p6g-3001.app.github.dev/api/login",{
+					//const response = await fetch("https://vigilant-orbit-r47rx6gxj55g35p6g-3001.app.github.dev/api/login",{
+					const response = await fetch(process.env.BACKEND_URL + "/api/login",{
 						method: "POST",
 						body: JSON.stringify(infoLogin),
 						headers:{
@@ -61,8 +51,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 						localStorage.setItem('token',data.access_token)
 						localStorage.setItem('name', data.name)
 						localStorage.setItem('email',data.email)
+						// setStore({auth:true})
+						return true
 					}else{
-						alert("Algo salio mal al momento de loguearte, revisa que tus datos sean los adecuado sino recuerda que debes registrate primero")
+
+						alert("Algo salio mal revisa que tus datos sean correctos,Antes recuerda que debes haberte registrado")
+						return false
 					}
 					
 				}catch(e){
@@ -71,14 +65,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			},
 			//PEDIDO PARA UNICAMENTE USUARIO LOGUEADO QUE TIENE SU ACCESS access_token
-			getList: async () => {
+			getUsersList: async () => {
 				let token = localStorage.getItem('token')
 				if(!token){
-					alert("Primero logueate para tener acceso a un token")
+					alert("Primero logueate para tener acceso al sitio")
 					return;
 				}
 				try{
-					let response = await fetch("https://vigilant-orbit-r47rx6gxj55g35p6g-3001.app.github.dev/api/users",{
+					let response = await fetch(process.env.BACKEND_URL + "/api/users",{
 						headers:{
 							Authorization:`Bearer ${token}` // Agregamos el token en el header como no enviamos un body en este metodo 	GET no es necesario colocar "Content-Type....
 						}
@@ -100,7 +94,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				localStorage.removeItem('name')
 				localStorage.removeItem('email')
 				setStore({...getStore(),usersList: [] });//limpia la lista de usuarios
-				alert("Se ha cerrado la sesión")
+				alert("Se ha cerrado la sesión")//se debe implementar desde el FRONT los alerts
+				// setStore({auth:false})//otra forma de validar si esta logueado
 
 			},
 
